@@ -38,11 +38,13 @@ export const authOptions: AuthOptions = {
           image: user?.image,
         };
         const { data } = await axios.post(LOGIN_URL, payload);
+        console.log("Login response data:", data);
 
         user.id = data?.user?.id?.toString();
         user.token = data?.user?.token;
         return true;
       } catch (error) {
+        console.error("Error during signIn:", error);
         if (error instanceof AxiosError) {
           return redirect(`/auth/error?message=${error.message}`);
         }
@@ -75,8 +77,8 @@ export const authOptions: AuthOptions = {
 
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: process.env.GOOGLE_CLIENT_ID ?? "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
       authorization: {
         params: {
           prompt: "consent",
@@ -84,6 +86,20 @@ export const authOptions: AuthOptions = {
           response_type: "code",
         },
       },
+      httpOptions: {
+        timeout: 10000,
+      },
     }),
   ],
+  cookies: {
+    pkceCodeVerifier: {
+      name: "next-auth.pkce.code_verifier",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      },
+    },
+  },
 };

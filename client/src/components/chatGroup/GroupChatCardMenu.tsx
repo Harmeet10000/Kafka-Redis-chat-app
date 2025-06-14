@@ -57,6 +57,15 @@ export default function GroupChatCardMenu({
           <DotsVerticalIcon className="h-5 w-5" />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
+          <DropdownMenuItem asChild>
+            <a
+              href={`${Env.APP_URL}/chat/${group.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Open in new tab
+            </a>
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={handleCopy}>Copy</DropdownMenuItem>
           <DropdownMenuItem onClick={() => setEditDialog(true)}>
             Edit

@@ -2,7 +2,7 @@ import express, { Application, Request, Response } from "express";
 import "dotenv/config";
 import cors from "cors";
 const app: Application = express();
-const PORT = process.env.PORT || 7000;
+const PORT = process.env.PORT || 8000;
 import Routes from "./routes/index.js";
 import { Server } from "socket.io";
 import { createServer } from "http";
@@ -10,7 +10,7 @@ import { setupSocket } from "./socket.js";
 import { createAdapter } from "@socket.io/redis-streams-adapter";
 import redis from "./config/redis.js";
 import { instrument } from "@socket.io/admin-ui";
-import { connectKafkaProducer } from "./config/kafka.config.js";
+import { connectKafkaProducer, producer } from "./config/kafka.config.js";
 import { consumeMessages } from "./helper.js";
 
 const server = createServer(app);
@@ -38,12 +38,30 @@ app.get("/", (req: Request, res: Response) => {
   return res.send("It's working Guys 🙌");
 });
 
-// * Add Kafka Producer
-connectKafkaProducer().catch((err) => console.log("Kafka Consumer error", err));
+// * Initialize Kafka Producer and Consumer
+const initializeKafka = async () => {
+  try {
+    await connectKafkaProducer();
+    console.log("Kafka producer connected successfully");
 
-consumeMessages(process.env.KAFKA_TOPIC!).catch((err) =>
-  console.log("The Kafka Consume error", err)
-);
+    // Start consuming messages
+    await consumeMessages("chats");
+    console.log("Kafka consumer started successfully");
+  } catch (error) {
+    console.error("Failed to initialize Kafka:", error);
+    process.exit(1);
+  }
+};
+
+// Initialize Kafka
+initializeKafka();
+
+// Graceful shutdown
+process.on("SIGTERM", () => {
+  console.log("Received SIGTERM. Closing Kafka producer...");
+  producer.disconnect();
+  process.exit(0);
+});
 
 // * Routes
 app.use("/api", Routes);

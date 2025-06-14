@@ -7,6 +7,7 @@ import { authOptions, CustomSession } from "./api/auth/[...nextauth]/options";
 import { getServerSession } from "next-auth";
 export default async function LandingPage() {
   const session: CustomSession | null = await getServerSession(authOptions);
+  // console.log("Session in Landing Page:", session);
   return (
     <div className="min-h-screen flex flex-col ">
       {/* Header */}
