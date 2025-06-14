@@ -1,0 +1,35 @@
+# Auto detect text files and perform LF normalization
+* text=auto eol=lf
+
+# TypeScript files
+*.ts linguist-detectable=true
+*.tsx linguist-detectable=true
+
+# JavaScript files
+*.js linguist-detectable=true
+*.jsx linguist-detectable=true
+
+# Documentation
+*.md text diff=markdown
+*.mdx text diff=markdown
+
+# Configs
+*.json text
+*.yaml text
+*.yml text
+
+# Docker
+*.dockerfile text
+Dockerfile text
+
+# Graphics
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.svg text
+
+# Certificates
+*.pem text
+*.cert text
+*.key text

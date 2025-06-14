@@ -1,5 +1,0 @@
-{
-  "dependencies": {
-    "node-rdkafka": "^3.4.1"
-  }
-}
